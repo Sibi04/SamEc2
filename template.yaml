@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  EC2LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: EC2InstanceManagement
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      CodeUri: ec2_lambda/
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonEC2ReadOnlyAccess
+      Events:
+        ListInstances:
+          Type: Api
+          Properties:
+            Path: /list-instances/info
+            Method: GET
+        RunningInstances:
+          Type: Api
+          Properties:
+            Path: /running-instances/info
+            Method: GET
+        StoppedInstances:
+          Type: Api
+          Properties:
+            Path: /stopped-instances/info
+            Method: GET
+
+Outputs:
+  ApiGatewayUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
